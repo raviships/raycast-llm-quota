@@ -1,0 +1,50 @@
+{
+  "$schema": "https://www.raycast.com/schemas/extension.json",
+  "name": "raycast-llm-quota",
+  "title": "LLM Quota",
+  "description": "Monitor Codex and Grok subscription quotas and banked resets from the menu bar.",
+  "icon": "icon.png",
+  "author": "ravi_s",
+  "platforms": [
+    "macOS"
+  ],
+  "categories": [
+    "Productivity",
+    "Developer Tools"
+  ],
+  "keywords": [
+    "codex",
+    "grok",
+    "quota",
+    "usage limits"
+  ],
+  "license": "MIT",
+  "commands": [
+    {
+      "name": "llm-quota",
+      "title": "LLM Quota",
+      "description": "Monitor Codex and Grok quotas from the menu bar.",
+      "mode": "menu-bar",
+      "interval": "5m"
+    }
+  ],
+  "dependencies": {
+    "@raycast/api": "^2.1.2"
+  },
+  "devDependencies": {
+    "@raycast/eslint-config": "^2.2.0",
+    "@types/node": "^26.4.0",
+    "@types/react": "^19.2.18",
+    "eslint": "^10.9.1",
+    "prettier": "^3.9.6",
+    "typescript": "^6.0.3"
+  },
+  "scripts": {
+    "build": "ray build",
+    "dev": "ray develop",
+    "fix-lint": "ray lint --fix",
+    "lint": "ray lint",
+    "prepublishOnly": "echo \"Use npm run publish to publish this extension to the Raycast Store.\" && exit 1",
+    "publish": "npx @raycast/api@latest publish"
+  }
+}
