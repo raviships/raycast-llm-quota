@@ -31,7 +31,7 @@ export default function Command() {
       if (result.status === "fulfilled") {
         freshQuotas[provider.id] = result.value;
       } else {
-        nextErrors[provider.id] = errorMessage(result.reason);
+        nextErrors[provider.id] = errorMessage(provider.id, result.reason);
       }
     });
 
@@ -211,6 +211,13 @@ function latestUpdate(quotas: Quotas): string | undefined {
   return `${Math.floor(minutes / 60)}h ago`;
 }
 
-function errorMessage(error: unknown): string {
-  return error instanceof Error ? error.message : "Unknown error";
+function errorMessage(provider: ProviderId, error: unknown): string {
+  const message = error instanceof Error ? error.message : String(error);
+  if (provider === "codex" && /token_expired|authentication token is expired/i.test(message)) {
+    return "Codex session refresh failed — run codex login";
+  }
+
+  const compact = message.replace(/\s+/g, " ").trim();
+  if (!compact) return "Unknown error";
+  return compact.length > 160 ? `${compact.slice(0, 159)}…` : compact;
 }

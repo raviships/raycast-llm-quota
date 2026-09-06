@@ -23,7 +23,7 @@ type RateLimitResponse = {
 };
 
 export async function fetchCodexQuota(): Promise<ProviderQuota> {
-  const response = await readRateLimits();
+  const response = await readRateLimitsWithAuthRetry();
   const windows = snapshotWindows(response.rateLimits);
 
   if (windows.length === 0) throw new Error("Codex returned no quota windows");
@@ -34,6 +34,20 @@ export async function fetchCodexQuota(): Promise<ProviderQuota> {
     bankedResets: parseCount(response.rateLimitResetCredits?.availableCount),
     bankedResetExpiries: resetExpiries(response.rateLimitResetCredits?.credits),
   };
+}
+
+async function readRateLimitsWithAuthRetry(): Promise<RateLimitResponse> {
+  try {
+    return await readRateLimits();
+  } catch (error) {
+    if (!isExpiredTokenError(error)) throw error;
+    return readRateLimits();
+  }
+}
+
+function isExpiredTokenError(error: unknown): boolean {
+  const message = error instanceof Error ? error.message : String(error);
+  return /token_expired|authentication token is expired/i.test(message);
 }
 
 function snapshotWindows(snapshot: RateLimitSnapshot): QuotaWindow[] {
